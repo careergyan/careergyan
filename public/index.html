@@ -139,6 +139,8 @@
   .radio-group{display:flex;gap:26px;margin:6px 0 20px;}
   .radio-group label{display:flex;align-items:center;gap:8px;font-size:14.5px;color:var(--ink);font-weight:500;cursor:pointer;}
   .radio-group input{accent-color:var(--blue);width:16px;height:16px;}
+  .level-required,.captcha-required{font-size:14.5px;color:var(--ink);font-weight:500;}
+  .captcha-required{margin-bottom:8px;}
 
   .btn-register{
     width:100%;padding:15px;border:none;border-radius:10px;
@@ -358,6 +360,51 @@
     .row2{grid-template-columns:1fr;}
   }
 
+  .early-bird-info{grid-column:1 / -1;}
+  .early-bird-info .val{line-height:1.45;}
+  @media(max-width:600px){
+    header{padding:12px 16px;}
+    .brand img{height:44px;max-width:180px;}
+    .cta-top{padding:9px 14px;font-size:13px;}
+    .hero{padding:28px 16px 24px;gap:24px;}
+    .hero h1{font-size:28px;line-height:1.18;}
+    .hero .sub{font-size:15px;margin-bottom:22px;}
+    .eyebrow-badge{font-size:12px;padding:6px 12px;margin-bottom:16px;}
+    .info-card{padding:20px 16px;gap:16px;margin-bottom:20px;}
+    .info-item .lab{font-size:14px;margin-bottom:5px;}
+    .info-item .val{font-size:14px;overflow-wrap:anywhere;}
+    .early-bird-info{padding-top:2px;}
+    .highlight-strip{gap:9px;}
+    .pill{width:100%;padding:10px 12px;font-size:13px;}
+    .savings-banner{padding:16px;gap:10px;align-items:flex-start;flex-direction:column;}
+    .savings-banner .num{font-size:22px;}
+    .register-card{padding:24px 18px 22px;border-radius:14px;}
+    .register-card h2{font-size:21px;margin-bottom:18px;}
+    .field{margin-bottom:12px;}
+    .field input[type=text],.field input[type=email],.field input[type=tel],.field select{min-height:48px;padding:12px 13px;font-size:16px;}
+    .radio-group{gap:20px;margin:8px 0 16px;flex-wrap:wrap;}
+    .captcha-wrap{overflow:hidden;min-height:78px;}
+    .g-recaptcha{transform:scale(.88);transform-origin:left top;}
+    .btn-register{min-height:50px;font-size:16px;}
+    section.block{padding-left:16px;padding-right:16px;}
+    .section-head h2{font-size:27px;}
+    .country-grid{gap:8px;}
+    .country-chip{padding:12px 7px;font-size:13px;}
+    .service-grid{gap:12px;}
+    .service-card{padding:16px;}
+    .powered-banner{padding:32px 16px 40px;}
+    .powered-banner h2{font-size:28px;}
+    .meta-row{width:100%;padding:14px 16px;}
+    .info-layout{padding:32px 16px 8px;}
+    .stats-banner{padding:24px 16px;gap:20px 10px;}
+    .stats-banner .stat .n{font-size:22px;}
+    .attend-card{padding:20px 16px;}
+    .highlight-item{padding:13px 14px;font-size:13.5px;}
+    .about-event-card{padding:22px 18px;}
+    footer{margin-top:40px;padding:30px 16px;}
+    .wa-float{right:16px;bottom:16px;width:50px;height:50px;}
+  }
+
   .payment-status{margin-top:14px;text-align:center;font-size:13px;color:var(--muted);min-height:20px;}
   .payment-status.error{color:#b42318;}
   .btn-register:disabled{opacity:.65;cursor:not-allowed;}
@@ -395,6 +442,10 @@
           <div class="lab"><span class="icon">📍</span>Location</div>
           <div class="val">Hyatt Centric, MG Road, Bangalore</div>
         </div>
+        <div class="info-item early-bird-info">
+          <div class="lab"><span class="icon">🎁</span>Early Bird</div>
+          <div class="val"><strong>Early Bird Offer – Limited to First 200 Registrations!</strong><br>Register early and grab your special discounted price before the offer ends! <strong>₹100</strong></div>
+        </div>
       </div>
 
       <div class="highlight-strip">
@@ -411,9 +462,6 @@
 
     <div class="register-card" id="registerForm">
       <h2>Register Now</h2>
-      <div style="text-align:center;color:#2A56C6;font-weight:700;font-size:15px;margin:-10px 0 18px;">
-        Registration Fee: ₹100
-      </div>
 
       <form id="fairForm" novalidate>
         <div class="field">
@@ -438,7 +486,7 @@
             <input type="text" id="country" name="country" placeholder="Preferred Country of Study *" required maxlength="60" pattern="[A-Za-z][A-Za-z .\'-]{1,59}" autocomplete="country-name">
           </div>
           <div class="field">
-            <label for="course" class="sr-only">Select Course *</label>
+            <label for="course" class="sr-only">Select Course</label>
             <select id="course" name="course" required>
               <option value="" selected>Select Course</option>
               <option>Engineering</option>
@@ -452,13 +500,15 @@
           </div>
         </div>
 
-        <div class="radio-group">
+        <div class="radio-group" aria-label="Education Level">
+          <span class="level-required">Education Level</span>
           <label><input type="radio" name="level" value="Masters" required> Masters</label>
           <label><input type="radio" name="level" value="Bachelors"> Bachelors</label>
         </div>
 
 
         <div class="captcha-wrap">
+          
           <div class="g-recaptcha"
                data-sitekey="6Lc_waYtAAAAAKZER5uocbUK1i2crp60o4r5PaID"></div>
         </div>
@@ -613,6 +663,7 @@
 
   const CREATE_ORDER_URL = `${SUPABASE_URL}/functions/v1/create-order`;
   const VERIFY_PAYMENT_URL = `${SUPABASE_URL}/functions/v1/verify-payment`;
+  const SEND_CONFIRMATION_EMAIL_URL = `${SUPABASE_URL}/functions/v1/send-confirmation-email`;
 
   const form = document.getElementById('fairForm');
   const button = document.getElementById('registerButton');
@@ -804,6 +855,17 @@
 
             if (verification.verified === false || verification.success === false) {
               throw new Error(verification.error || 'Payment verification failed.');
+            }
+
+            // 3. Trigger confirmation emails only after payment is verified.
+            // Email failure must NOT change the already-successful payment status.
+            try {
+              await callSupabaseFunction(SEND_CONFIRMATION_EMAIL_URL, {
+                registrationId: registrationId
+              });
+              console.log('Confirmation and admin emails triggered successfully.');
+            } catch (emailError) {
+              console.error('Confirmation email error:', emailError);
             }
 
             form.style.display = 'none';
