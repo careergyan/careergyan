@@ -411,6 +411,9 @@
 
     <div class="register-card" id="registerForm">
       <h2>Register Now</h2>
+      <div style="text-align:center;color:#2A56C6;font-weight:700;font-size:15px;margin:-10px 0 18px;">
+        Registration Fee: ₹100
+      </div>
 
       <form id="fairForm" novalidate>
         <div class="field">
@@ -740,11 +743,11 @@
       // 1. Create the Razorpay order through the secure Supabase Edge Function.
       const order = await callSupabaseFunction(CREATE_ORDER_URL, registrationData);
 
-      const orderId = order.order_id || order.razorpay_order_id;
-      const razorpayKey = order.key_id || order.razorpay_key_id;
-      const amount = Number(order.amount);
-      const currency = order.currency || 'INR';
-      const registrationId = order.registration_id || order.id || null;
+      const orderId = order.razorpay?.orderId;
+      const razorpayKey = order.razorpay?.keyId;
+      const amount = Number(order.razorpay?.amount);
+      const currency = order.razorpay?.currency || 'INR';
+      const registrationId = order.registrationId || null;
 
       if (!orderId || !razorpayKey || !amount) {
         throw new Error('Payment order was not prepared correctly. Please contact CareerGyan.');
