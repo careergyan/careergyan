@@ -434,12 +434,12 @@
 
         <div class="row2">
           <div class="field">
-            <label for="country" class="sr-only">Preferred Country of Study</label>
-            <input type="text" id="country" name="country" placeholder="Preferred Country of Study" maxlength="60" pattern="[A-Za-z][A-Za-z .\'-]{1,59}" autocomplete="country-name">
+            <label for="country" class="sr-only">Preferred Country of Study *</label>
+            <input type="text" id="country" name="country" placeholder="Preferred Country of Study *" required maxlength="60" pattern="[A-Za-z][A-Za-z .\'-]{1,59}" autocomplete="country-name">
           </div>
           <div class="field">
-            <label for="course" class="sr-only">Select Course</label>
-            <select id="course" name="course">
+            <label for="course" class="sr-only">Select Course *</label>
+            <select id="course" name="course" required>
               <option value="" selected>Select Course</option>
               <option>Engineering</option>
               <option>Business / Management</option>
@@ -453,7 +453,7 @@
         </div>
 
         <div class="radio-group">
-          <label><input type="radio" name="level" value="Masters"> Masters</label>
+          <label><input type="radio" name="level" value="Masters" required> Masters</label>
           <label><input type="radio" name="level" value="Bachelors"> Bachelors</label>
         </div>
 
@@ -699,15 +699,25 @@
       return;
     }
 
-    // Country is optional in the existing form, but if supplied it must be valid.
-    if (country && !/^[A-Za-z][A-Za-z .'-]{1,59}$/.test(country)) {
+    if (!country) {
+      countryEl.focus();
+      setStatus('Preferred country of study is required.', true);
+      return;
+    }
+
+    if (!/^[A-Za-z][A-Za-z .'-]{1,59}$/.test(country)) {
       countryEl.focus();
       setStatus('Please enter a valid country name.', true);
       return;
     }
 
-    // Course remains optional to preserve the existing form flow.
-    if (course && course.length > 80) {
+    if (!course) {
+      courseEl.focus();
+      setStatus('Please select a course.', true);
+      return;
+    }
+
+    if (course.length > 80) {
       courseEl.focus();
       setStatus('Please select a valid course.', true);
       return;
