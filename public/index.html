@@ -415,24 +415,24 @@
       <form id="fairForm" novalidate>
         <div class="field">
           <label for="name" class="sr-only">Full Name *</label>
-          <input type="text" id="name" name="name" placeholder="Full Name *" required>
+          <input type="text" id="name" name="name" placeholder="Full Name *" required minlength="2" maxlength="60" pattern="[A-Za-z][A-Za-z .\'-]{1,59}" autocomplete="name">
         </div>
 
         <div class="row2">
           <div class="field">
             <label for="email" class="sr-only">E-mail *</label>
-            <input type="email" id="email" name="email" placeholder="E-mail *" required>
+            <input type="email" id="email" name="email" placeholder="E-mail *" required maxlength="120" autocomplete="email">
           </div>
           <div class="field">
             <label for="phone" class="sr-only">Mobile Number *</label>
-            <input type="tel" id="phone" name="phone" placeholder="Mobile Number *" required>
+            <input type="tel" id="phone" name="phone" placeholder="Mobile Number *" required inputmode="numeric" maxlength="10" pattern="[6-9][0-9]{9}" autocomplete="tel">
           </div>
         </div>
 
         <div class="row2">
           <div class="field">
             <label for="country" class="sr-only">Preferred Country of Study</label>
-            <input type="text" id="country" name="country" placeholder="Preferred Country of Study">
+            <input type="text" id="country" name="country" placeholder="Preferred Country of Study" maxlength="60" pattern="[A-Za-z][A-Za-z .\'-]{1,59}" autocomplete="country-name">
           </div>
           <div class="field">
             <label for="course" class="sr-only">Select Course</label>
@@ -646,11 +646,72 @@
     return data;
   }
 
+  // Keep the frontend field names aligned with the create-order Edge Function:
+  // name, email, phone, country, course, level, captchaToken.
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
 
-    if (!form.checkValidity()) {
-      form.reportValidity();
+    const nameEl = document.getElementById('name');
+    const emailEl = document.getElementById('email');
+    const phoneEl = document.getElementById('phone');
+    const countryEl = document.getElementById('country');
+    const courseEl = document.getElementById('course');
+    const levelEl = form.querySelector('input[name="level"]:checked');
+
+    const name = nameEl.value.trim();
+    const email = emailEl.value.trim().toLowerCase();
+    const phone = phoneEl.value.trim();
+    const country = countryEl.value.trim();
+    const course = courseEl.value;
+    const educationLevel = levelEl?.value || '';
+
+    // ---------- Field validation ----------
+    if (!name) {
+      nameEl.focus();
+      setStatus('Full name is required.', true);
+      return;
+    }
+
+    if (!/^[A-Za-z][A-Za-z .'-]{1,59}$/.test(name)) {
+      nameEl.focus();
+      setStatus('Please enter a valid full name using letters, spaces, hyphens or apostrophes.', true);
+      return;
+    }
+
+    if (!email) {
+      emailEl.focus();
+      setStatus('E-mail is required.', true);
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+      emailEl.focus();
+      setStatus('Please enter a valid e-mail address.', true);
+      return;
+    }
+
+    if (!/^[6-9][0-9]{9}$/.test(phone)) {
+      phoneEl.focus();
+      setStatus('Mobile number must be exactly 10 digits and start with 6, 7, 8 or 9.', true);
+      return;
+    }
+
+    // Country is optional in the existing form, but if supplied it must be valid.
+    if (country && !/^[A-Za-z][A-Za-z .'-]{1,59}$/.test(country)) {
+      countryEl.focus();
+      setStatus('Please enter a valid country name.', true);
+      return;
+    }
+
+    // Course remains optional to preserve the existing form flow.
+    if (course && course.length > 80) {
+      courseEl.focus();
+      setStatus('Please select a valid course.', true);
+      return;
+    }
+
+    if (!educationLevel) {
+      setStatus('Please select Masters or Bachelors.', true);
       return;
     }
 
@@ -660,16 +721,16 @@
     }
 
     const captchaToken = grecaptcha.getResponse();
-    const educationLevel = form.querySelector('input[name="level"]:checked')?.value || '';
 
+    // IMPORTANT: These keys match the current create-order Edge Function.
     const registrationData = {
-      full_name: document.getElementById('name').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      mobile_number: document.getElementById('phone').value.trim(),
-      preferred_country: document.getElementById('country').value.trim(),
-      course: document.getElementById('course').value,
-      education_level: educationLevel,
-      recaptcha_token: captchaToken
+      name,
+      email,
+      phone,
+      country,
+      course,
+      level: educationLevel,
+      captchaToken
     };
 
     button.disabled = true;
@@ -699,15 +760,15 @@
         name: 'CareerGyan',
         description: 'CareerGyan Abroad Education Fair – Intake 2026',
         prefill: {
-          name: registrationData.full_name,
-          email: registrationData.email,
-          contact: registrationData.mobile_number
+          name,
+          email,
+          contact: phone
         },
         notes: {
           registration_id: registrationId || '',
-          preferred_country: registrationData.preferred_country,
-          course: registrationData.course,
-          education_level: registrationData.education_level
+          preferred_country: country,
+          course,
+          education_level: educationLevel
         },
         theme: { color: '#2A56C6' },
         modal: {
@@ -759,6 +820,19 @@
       setStatus(error.message || 'Something went wrong. Please try again.', true);
     }
   });
+
+  // Keep mobile input numeric and capped at 10 digits.
+  document.getElementById('phone').addEventListener('input', function() {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+  });
+
+  // Trim accidental leading/trailing spaces as the user leaves text fields.
+  ['name', 'email', 'country'].forEach(function(id) {
+    document.getElementById(id).addEventListener('blur', function() {
+      this.value = this.value.trim();
+    });
+  });
+
 </script>
 
 </body>
