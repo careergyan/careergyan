@@ -1,32 +1,20 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    {
-      "source": "/fair",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/event",
-      "destination": "/index.html"
-    }
+    { "source": "/fair", "destination": "/index.html" },
+    { "source": "/event", "destination": "/index.html" }
   ],
   "headers": [
     {
       "source": "/fair",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     },
     {
       "source": "/event",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
       ]
     }
   ]
