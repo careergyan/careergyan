@@ -1,8 +1,8 @@
 {
   "cleanUrls": true,
   "rewrites": [
-    { "source": "/fair", "destination": "/index.html" },
-    { "source": "/event", "destination": "/index.html" }
+    { "source": "/fair", "destination": "/index" },
+    { "source": "/event", "destination": "/index" }
   ],
   "headers": [
     {
