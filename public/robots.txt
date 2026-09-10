@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://careergyan.co/sitemap.xml
+Sitemap: https://events.careergyan.co/sitemap.xml
