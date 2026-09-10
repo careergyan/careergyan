@@ -31,7 +31,3 @@ The frontend accepts common response names from the Edge Functions (`registratio
 ## Vercel
 Import this repository into Vercel. The site is static, so no Render server is required for the frontend.
 
-## Important
-The final live payment setup should be tested with Razorpay test credentials before production. Confirm the exact registration amount on the server; do not trust an amount supplied by the browser.
-
-The privacy policy and terms included here are general website text and should be reviewed/approved by CareerGyan before production use.
