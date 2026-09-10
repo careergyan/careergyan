@@ -1,3 +1,11 @@
 {
-  "cleanUrls": true
+ 
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/fair",
+      "destination": "/index.html"
+    }
+  ]
+
 }
